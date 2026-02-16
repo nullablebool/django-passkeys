@@ -64,7 +64,7 @@ def reg_begin(request):
     server = getServer(request)
     auth_attachment = getattr(settings,'KEY_ATTACHMENT', None)
     registration_data, state = server.register_begin({
-        u'id':  urlsafe_b64encode(request.user.username.encode("utf8")),
+        u'id':  urlsafe_b64encode(request.user.get_username().encode("utf8")),
         u'name': request.user.get_username(),
         u'displayName': request.user.get_full_name()
     }, getUserCredentials(request.user), authenticator_attachment = auth_attachment, resident_key_requirement=fido2.webauthn.ResidentKeyRequirement.PREFERRED)
@@ -107,7 +107,7 @@ def auth_begin(request):
     if "base_username" in request.session:
         username = request.session["base_username"]
     if request.user.is_authenticated:
-        username = request.user.username
+        username = request.user.get_username()
     if username:
         credentials = getUserCredentials(username)
     auth_data, state = server.authenticate_begin(credentials)
